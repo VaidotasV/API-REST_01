@@ -1,8 +1,10 @@
 package lt.codeacademy.projektas01.controller;
-
+import lt.codeacademy.projektas01.model.EmployeeDTO;
+import lt.codeacademy.projektas01.model.EmployeeMapper;
 import lt.codeacademy.projektas01.model.Employee;
 import lt.codeacademy.projektas01.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
+import java.util.stream.Collectors;
 
 import java.util.List;
 
@@ -17,23 +19,31 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public List<Employee> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    public List<EmployeeDTO> getAllEmployees() {
+        List<Employee> employees = employeeService.getAllEmployees();
+        return employees.stream()
+                .map(EmployeeMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Employee getEmployeeById(@PathVariable("id") Long id) {
-        return employeeService.getEmployeeById(id);
+    public EmployeeDTO getEmployeeById(@PathVariable("id") Long id) {
+        Employee employee = employeeService.getEmployeeById(id);
+        return EmployeeMapper.toDTO(employee);
     }
 
     @PostMapping
-    public Employee addEmployee(@RequestBody Employee employee) {
-        return employeeService.saveEmployee(employee);
+    public EmployeeDTO createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        Employee employee = EmployeeMapper.toEntity(employeeDTO);
+        Employee savedEmployee = employeeService.createEmployee(employee);
+        return EmployeeMapper.toDTO(savedEmployee);
     }
 
     @PutMapping("/{id}")
-    public Employee updateEmployee(@PathVariable("id") Long id, @RequestBody Employee updatedEmployee) {
-        return employeeService.updateEmployee(id, updatedEmployee);
+    public EmployeeDTO updateEmployee(@PathVariable("id") Long id, @RequestBody EmployeeDTO updatedEmployeeDTO) {
+        Employee updatedEmployee = EmployeeMapper.toEntity(updatedEmployeeDTO);
+        Employee savedEmployee = employeeService.updateEmployee(id, updatedEmployee);
+        return EmployeeMapper.toDTO(savedEmployee);
     }
 
     @DeleteMapping("/{id}")
