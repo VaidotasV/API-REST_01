@@ -21,7 +21,9 @@ public class EmployeeService {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Darbuotojas nerastas su ID: " + id));
     }
-
+    public Employee createEmployee(Employee employee) {
+        return employeeRepository.save(employee);
+    }
     public Employee updateEmployee(Long id, Employee updatedEmployee) {
         Employee existingEmployee = getEmployeeById(id);
 
